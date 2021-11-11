@@ -5,7 +5,7 @@ import { Text, View } from "react-native";
 const HomeScreen = () => {
   return (
     <View style={tw("")}>
-      <Text>Lets make the Tinder Clone!!</Text>
+      <Text></Text>
     </View>
   );
 };
