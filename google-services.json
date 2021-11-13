@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "711999260379",
+    "project_id": "jak-tinder-clone-fed6e",
+    "storage_bucket": "jak-tinder-clone-fed6e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711999260379:android:ba937cbe17f1cd31d06efe",
+        "android_client_info": {
+          "package_name": "host.exp.exponent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "711999260379-4qrlmcf283rqrrqfucdusmjmgb2t19tt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9p1SNX55gl4M87dD5at0CtokOxhO2yDY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "711999260379-4qrlmcf283rqrrqfucdusmjmgb2t19tt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "711999260379-slcg5g9gb3i96vggc16sl43bki1aai0g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "host.exp.exponent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
