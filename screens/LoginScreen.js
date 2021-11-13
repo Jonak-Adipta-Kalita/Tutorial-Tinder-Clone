@@ -1,13 +1,11 @@
 import React from "react";
 import tw from "tailwind-rn";
-import { View, Text } from "react-native";
+import { View } from "react-native";
+import useAuth from "../hooks/useAuth";
 
 const LoginScreen = () => {
-  return (
-    <View style={tw("")}>
-      <Text></Text>
-    </View>
-  );
+  const { signInWithGoogle } = useAuth();
+  return <View style={tw("")}></View>;
 };
 
 export default LoginScreen;
