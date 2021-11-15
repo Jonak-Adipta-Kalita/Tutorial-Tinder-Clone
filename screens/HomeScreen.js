@@ -105,6 +105,24 @@ const HomeScreen = () => {
           )}
         />
       </View>
+      <View style={tw("flex flex-row justify-evenly")}>
+        <TouchableOpacity
+          onPress={() => swipeRef.current.swipeLeft()}
+          style={tw(
+            "items-center justify-center rounded-full w-16 h-16 bg-red-200"
+          )}
+        >
+          <Entypo name="cross" size={24} color="red" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => swipeRef.current.swipeRight()}
+          style={tw(
+            "items-center justify-center rounded-full w-16 h-16 bg-green-200"
+          )}
+        >
+          <AntDesign name="heart" size={24} color="green" />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
