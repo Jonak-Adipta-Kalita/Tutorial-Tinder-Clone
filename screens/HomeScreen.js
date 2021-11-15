@@ -1,21 +1,43 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import tw from "tailwind-rn";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import useAuth from "../hooks/useAuth";
 import { useNavigation } from "@react-navigation/core";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
+import Swiper from "react-native-deck-swiper";
+import Card from "../components/Card";
+
+const DUMMY_DATA = [
+  {
+    id: 0,
+    displayName: "Jonak Adipta Kalita",
+    job: "Student",
+    photoURL: "https://avatars.githubusercontent.com/u/70377522?v=4",
+    age: 14,
+  },
+  {
+    id: 1,
+    displayName: "Kiaara Advani",
+    job: "Actress",
+    photoURL:
+      "https://wikibio.in/wp-content/uploads/2019/02/Kiara-Advani-Photo.jpg",
+    age: 29,
+  },
+];
 
 const HomeScreen = () => {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
+  const dummyData = true;
+  const swipeRef = useRef(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({});
   }, [navigation]);
 
   return (
-    <SafeAreaView style={tw("")}>
+    <SafeAreaView style={tw("flex-1")}>
       <View
         style={tw("flex-row items-center relative mt-2 justify-between px-5")}
       >
@@ -39,6 +61,49 @@ const HomeScreen = () => {
         >
           <Ionicons name="chatbubbles-sharp" size={30} color="#FF5864" />
         </TouchableOpacity>
+      </View>
+      <View style={tw("flex-1 -mt-6")}>
+        <Swiper
+          ref={swipeRef}
+          cards={dummyData && DUMMY_DATA}
+          containerStyle={{ backgroundColor: "transparent" }}
+          stackSize={5}
+          cardIndex={0}
+          verticalSwipe={false}
+          animateCardOpacity
+          onSwipedLeft={() => {}}
+          onSwipedRight={() => {}}
+          backgroundColor={"#4FD0E9"}
+          overlayLabels={{
+            left: {
+              title: "NOPE",
+              style: {
+                label: {
+                  textAlign: "right",
+                  color: "red",
+                },
+              },
+            },
+            right: {
+              title: "MATCH",
+              style: {
+                label: {
+                  textAlign: "left",
+                  color: "#4DED30",
+                },
+              },
+            },
+          }}
+          renderCard={(card) => (
+            <Card
+              key={card.id}
+              displayName={card.displayName}
+              photoURL={card.photoURL}
+              job={card.job}
+              age={card.age}
+            />
+          )}
+        />
       </View>
     </SafeAreaView>
   );
