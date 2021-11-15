@@ -5,7 +5,7 @@ import { View, Text } from "react-native";
 const ChatScreen = () => {
   return (
     <View style={tw("")}>
-      <Text></Text>
+      <Text>Am Chat Screen!!</Text>
     </View>
   );
 };

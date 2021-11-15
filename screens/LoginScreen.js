@@ -15,9 +15,7 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
+    navigation.setOptions({});
   }, [navigation]);
 
   return (
