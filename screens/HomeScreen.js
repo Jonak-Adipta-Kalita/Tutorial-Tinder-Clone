@@ -1,11 +1,13 @@
 import React from "react";
 import tw from "tailwind-rn";
-import { Text, View } from "react-native";
+import { View, Button } from "react-native";
+import useAuth from "../hooks/useAuth";
 
 const HomeScreen = () => {
+  const { logout } = useAuth();
   return (
     <View style={tw("")}>
-      <Text></Text>
+      <Button title="Logout" onPress={logout} />
     </View>
   );
 };
