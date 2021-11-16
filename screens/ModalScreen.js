@@ -1,3 +1,5 @@
+import { doc, serverTimestamp, setDoc } from "@firebase/firestore";
+import { useNavigation } from "@react-navigation/core";
 import React, { useState } from "react";
 import {
   View,
@@ -9,15 +11,33 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "tailwind-rn";
+import { db } from "../firebase";
 import useAuth from "../hooks/useAuth";
 
 const ModalScreen = () => {
   const { user } = useAuth();
+  const navigation = useNavigation();
+
   const [image, setImage] = useState(null);
   const [age, setAge] = useState(null);
   const [job, setJob] = useState(null);
 
   const incompleteForm = !image || !age || !job;
+
+  const updateUserProfile = () => {
+    setDoc(doc(db, "users", user.uid), {
+      id: user.uid,
+      displayName: user.displayName,
+      photoURL: image,
+      job: job,
+      age: age,
+      timestamp: serverTimestamp(),
+    })
+      .then(() => {
+        navigation.goBack();
+      })
+      .catch((error) => alert(error.message));
+  };
 
   return (
     <SafeAreaView style={tw("flex-1 items-center pt-3")}>
@@ -66,6 +86,7 @@ const ModalScreen = () => {
 
       <TouchableOpacity
         disabled={incompleteForm}
+        onPress={updateUserProfile}
         style={tw(
           `w-64 p-3 rounded-xl absolute bottom-2 ${
             incompleteForm ? "bg-gray-300" : "bg-red-400"

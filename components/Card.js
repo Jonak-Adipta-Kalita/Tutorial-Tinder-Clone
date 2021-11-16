@@ -27,10 +27,12 @@ const Card = ({ displayName, photoURL, job, age }) => {
         ]}
       >
         <View>
-          <Text style={tw("text-xl font-bold")}>{displayName}</Text>
+          <Text style={[tw("text-xl font-bold"), { fontSize: 16 }]}>
+            {displayName}
+          </Text>
           <Text>{job}</Text>
         </View>
-        <Text style={tw("text-2xl font-bold")}>{age}</Text>
+        <Text style={tw("text-xl font-bold")}>{age}</Text>
       </View>
     </View>
   );

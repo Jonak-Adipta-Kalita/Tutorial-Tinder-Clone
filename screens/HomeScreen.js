@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
 import tw from "tailwind-rn";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import useAuth from "../hooks/useAuth";
@@ -7,6 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-deck-swiper";
 import Card from "../components/Card";
+import { collection, onSnapshot, doc } from "@firebase/firestore";
+import { db } from "../firebase";
 
 const DUMMY_DATA = [
   {
@@ -29,12 +31,38 @@ const DUMMY_DATA = [
 const HomeScreen = () => {
   const { user, logout } = useAuth();
   const navigation = useNavigation();
-  const dummyData = true;
+  const dummyData = false;
   const swipeRef = useRef(null);
+  const [profiles, setProfiles] = useState([]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({});
-  }, [navigation]);
+  useLayoutEffect(
+    () =>
+      onSnapshot(doc(db, "users", user.uid), (snapshot) => {
+        if (!snapshot.exists()) {
+          navigation.navigate("Modal");
+        }
+      }),
+    []
+  );
+
+  useEffect(() => {
+    let unsub;
+    const fetchCards = async () => {
+      unsub = onSnapshot(collection(db, "users"), (snapshot) => {
+        setProfiles(
+          snapshot.docs
+            .filter((doc) => doc.id !== user.uid)
+            .map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+        );
+      });
+    };
+
+    fetchCards();
+    return unsub;
+  }, []);
 
   return (
     <SafeAreaView style={tw("flex-1")}>
@@ -68,7 +96,7 @@ const HomeScreen = () => {
       <View style={tw("flex-1 -mt-6")}>
         <Swiper
           ref={swipeRef}
-          cards={dummyData && DUMMY_DATA}
+          cards={dummyData ? DUMMY_DATA : profiles}
           containerStyle={{ backgroundColor: "transparent" }}
           stackSize={5}
           cardIndex={0}
@@ -97,15 +125,41 @@ const HomeScreen = () => {
               },
             },
           }}
-          renderCard={(card) => (
-            <Card
-              key={card.id}
-              displayName={card.displayName}
-              photoURL={card.photoURL}
-              job={card.job}
-              age={card.age}
-            />
-          )}
+          renderCard={(card) =>
+            card ? (
+              <Card
+                key={card.id}
+                displayName={card.displayName}
+                photoURL={card.photoURL}
+                job={card.job}
+                age={card.age}
+              />
+            ) : (
+              <View
+                style={[
+                  tw(
+                    "relative bg-white h-3/4 rounded-xl justify-center items-center"
+                  ),
+                  {
+                    shadowColor: "#000",
+                    shadowOffset: {
+                      width: 0,
+                      height: 1,
+                    },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 1.41,
+                    elevation: 2,
+                  },
+                ]}
+              >
+                <Text style={tw("font-bold pb-5")}>No More Profiles</Text>
+                <Image
+                  style={tw("h-20 w-20")}
+                  source={{ uri: "https://links.papareact.com/6gb" }}
+                />
+              </View>
+            )
+          }
         />
       </View>
       <View style={tw("flex flex-row justify-evenly")}>
