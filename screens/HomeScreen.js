@@ -15,8 +15,11 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
+  serverTimestamp,
 } from "@firebase/firestore";
 import { db } from "../firebase";
+import generateId from "../lib/generateId";
 
 const DUMMY_DATA = [
   {
@@ -103,7 +106,39 @@ const HomeScreen = () => {
     if (!profiles[cardIndex]) return;
 
     const userSwiped = profiles[cardIndex];
-    setDoc(doc(db, "users", user.uid, "swipes", userSwiped.id), userSwiped);
+    const loggedInProfile = await (
+      await getDoc(doc(db, "users", userSwiped.id))
+    ).data();
+
+    getDoc(doc(db, "users", userSwiped, "swipes", user.uid)).then(
+      (documentSnapshot) => {
+        if (documentSnapshot.exists()) {
+          setDoc(
+            doc(db, "users", user.uid, "swipes", userSwiped.id),
+            userSwiped
+          );
+
+          setDoc(doc(db, "matches", generateId(user.uid, userSwiped.id)), {
+            users: {
+              [user.uid]: loggedInProfile,
+              [userSwiped.id]: userSwiped,
+            },
+            usersMatched: [user.uid, userSwiped.id],
+            timestamp: serverTimestamp(),
+          });
+
+          navigation.navigate("Match", {
+            loggedInProfile,
+            userSwiped,
+          });
+        } else {
+          setDoc(
+            doc(db, "users", user.uid, "swipes", userSwiped.id),
+            userSwiped
+          );
+        }
+      }
+    );
   };
 
   return (
