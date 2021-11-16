@@ -70,8 +70,6 @@ const HomeScreen = () => {
       const passedUserIds = passes.length > 0 ? passes : ["test"];
       const swipedUserIds = swipes.length > 0 ? passes : ["test"];
 
-      console.log([...passedUserIds, ...swipedUserIds]);
-
       unsub = onSnapshot(
         query(
           collection(db, "users"),
