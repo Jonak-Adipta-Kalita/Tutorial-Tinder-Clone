@@ -70,6 +70,8 @@ const HomeScreen = () => {
       const passedUserIds = passes.length > 0 ? passes : ["test"];
       const swipedUserIds = swipes.length > 0 ? passes : ["test"];
 
+      console.log([...passedUserIds, ...swipedUserIds]);
+
       unsub = onSnapshot(
         query(
           collection(db, "users"),
@@ -107,17 +109,16 @@ const HomeScreen = () => {
 
     const userSwiped = profiles[cardIndex];
     const loggedInProfile = await (
-      await getDoc(doc(db, "users", userSwiped.id))
+      await getDoc(doc(db, "users", user.uid))
     ).data();
 
-    getDoc(doc(db, "users", userSwiped, "swipes", user.uid)).then(
+    getDoc(doc(db, "users", userSwiped.id, "swipes", user.uid)).then(
       (documentSnapshot) => {
         if (documentSnapshot.exists()) {
           setDoc(
             doc(db, "users", user.uid, "swipes", userSwiped.id),
             userSwiped
           );
-
           setDoc(doc(db, "matches", generateId(user.uid, userSwiped.id)), {
             users: {
               [user.uid]: loggedInProfile,
@@ -125,8 +126,7 @@ const HomeScreen = () => {
             },
             usersMatched: [user.uid, userSwiped.id],
             timestamp: serverTimestamp(),
-          });
-
+          }).catch((error) => alert(error));
           navigation.navigate("Match", {
             loggedInProfile,
             userSwiped,
@@ -135,7 +135,7 @@ const HomeScreen = () => {
           setDoc(
             doc(db, "users", user.uid, "swipes", userSwiped.id),
             userSwiped
-          );
+          ).catch((error) => alert(error));
         }
       }
     );
