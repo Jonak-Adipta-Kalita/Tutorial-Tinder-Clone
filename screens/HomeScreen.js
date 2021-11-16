@@ -7,7 +7,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-deck-swiper";
 import Card from "../components/Card";
-import { collection, onSnapshot, doc } from "@firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  doc,
+  setDoc,
+  query,
+  where,
+  getDocs,
+} from "@firebase/firestore";
 import { db } from "../firebase";
 
 const DUMMY_DATA = [
@@ -48,21 +56,55 @@ const HomeScreen = () => {
   useEffect(() => {
     let unsub;
     const fetchCards = async () => {
-      unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-        setProfiles(
-          snapshot.docs
-            .filter((doc) => doc.id !== user.uid)
-            .map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            }))
-        );
-      });
+      const passes = await getDocs(collection(db, "users", user.uid, "passes"))
+        .then((snapshot) => snapshot.docs.map((doc) => doc.id))
+        .catch((error) => alert(error.message));
+
+      const swipes = await getDocs(collection(db, "users", user.uid, "swipes"))
+        .then((snapshot) => snapshot.docs.map((doc) => doc.id))
+        .catch((error) => alert(error.message));
+
+      const passedUserIds = passes.length > 0 ? passes : ["test"];
+      const swipedUserIds = swipes.length > 0 ? passes : ["test"];
+
+      unsub = onSnapshot(
+        query(
+          collection(db, "users"),
+          where("id", "not-in", [...passedUserIds, ...swipedUserIds])
+        ),
+        (snapshot) => {
+          setProfiles(
+            snapshot.docs
+              .filter((doc) => doc.id !== user.uid)
+              .map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }))
+          );
+        }
+      );
     };
 
     fetchCards();
     return unsub;
-  }, []);
+  }, [db]);
+
+  const swipedLeft = (cardIndex) => {
+    if (!profiles[cardIndex]) return;
+
+    const userSwiped = profiles[cardIndex];
+    setDoc(
+      doc(db, "users", user.uid, "passes", userSwiped.id),
+      userSwiped
+    ).catch((error) => alert(error));
+  };
+
+  const swipedRight = async (cardIndex) => {
+    if (!profiles[cardIndex]) return;
+
+    const userSwiped = profiles[cardIndex];
+    setDoc(doc(db, "users", user.uid, "swipes", userSwiped.id), userSwiped);
+  };
 
   return (
     <SafeAreaView style={tw("flex-1")}>
@@ -102,8 +144,8 @@ const HomeScreen = () => {
           cardIndex={0}
           verticalSwipe={false}
           animateCardOpacity
-          onSwipedLeft={() => {}}
-          onSwipedRight={() => {}}
+          onSwipedLeft={(cardIntex) => swipedLeft(cardIntex)}
+          onSwipedRight={(cardIndex) => swipedRight(cardIndex)}
           backgroundColor={"#4FD0E9"}
           overlayLabels={{
             left: {
