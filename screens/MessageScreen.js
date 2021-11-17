@@ -94,7 +94,7 @@ const MessageScreen = () => {
         </TouchableWithoutFeedback>
         <View
           style={tw(
-            "flex-row justify-between items-center border-t border-gray-200 px-5 py-2"
+            "flex-row relative justify-between items-center border-t border-gray-200 px-5 py-2"
           )}
         >
           <TextInput
@@ -103,13 +103,16 @@ const MessageScreen = () => {
             onChangeText={setInput}
             onSubmitEditing={sendMessage}
             value={input}
+            multiline={true}
           />
-          <Button
-            onPress={sendMessage}
-            title="Send"
-            disabled={!input}
-            color="#FF5864"
-          />
+          <View style={tw("absolute right-5")}>
+            <Button
+              onPress={sendMessage}
+              title="Send"
+              disabled={!input}
+              color="#FF5864"
+            />
+          </View>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
