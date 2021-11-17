@@ -68,13 +68,12 @@ const HomeScreen = () => {
         .catch((error) => alert(error.message));
 
       const passedUserIds = passes.length > 0 ? passes : ["test"];
-      const swipedUserIds = swipes.length > 0 ? passes : ["test"];
+      const swipedUserIds = swipes.length > 0 ? swipes : ["test"];
+
+      const unshowUserIds = [...passedUserIds, ...swipedUserIds];
 
       unsub = onSnapshot(
-        query(
-          collection(db, "users"),
-          where("id", "not-in", [...passedUserIds, ...swipedUserIds])
-        ),
+        query(collection(db, "users"), where("id", "not-in", unshowUserIds)),
         (snapshot) => {
           setProfiles(
             snapshot.docs
@@ -124,7 +123,8 @@ const HomeScreen = () => {
             },
             usersMatched: [user.uid, userSwiped.id],
             timestamp: serverTimestamp(),
-          }).catch((error) => alert(error));
+          }).catch((error) => alert(error.message));
+
           navigation.navigate("Match", {
             loggedInProfile,
             userSwiped,
