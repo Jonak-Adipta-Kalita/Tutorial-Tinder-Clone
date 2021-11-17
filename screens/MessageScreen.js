@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,15 @@ import getMatchedUserInfo from "../lib/getMatchedUserInfo";
 import tw from "tailwind-rn";
 import SenderMessage from "../components/SenderMessage";
 import ReceiverMessage from "../components/ReceiverMessage";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+} from "@firebase/firestore";
+import { db } from "../firebase";
 
 const MessageScreen = () => {
   const { user } = useAuth();
@@ -27,7 +36,35 @@ const MessageScreen = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
 
-  const sendMessage = () => {};
+  useEffect(
+    () =>
+      onSnapshot(
+        query(
+          collection(db, "matches", matchDetails.id, "messages"),
+          orderBy("timestamp", "asc")
+        ),
+        (snapshot) =>
+          setMessages(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+          )
+      ),
+    [matchDetails, db]
+  );
+
+  const sendMessage = () => {
+    addDoc(collection(db, "matches", matchDetails.id, "messages"), {
+      userId: user.uid,
+      displayName: user.displayName,
+      photoURL: matchDetails.users[user.uid].photoURL,
+      message: input,
+      timestamp: serverTimestamp(),
+    });
+
+    setInput("");
+  };
 
   return (
     <SafeAreaView style={tw("flex-1")}>
@@ -67,7 +104,12 @@ const MessageScreen = () => {
             onSubmitEditing={sendMessage}
             value={input}
           />
-          <Button onPress={sendMessage} title="Send" color="#FF5864" />
+          <Button
+            onPress={sendMessage}
+            title="Send"
+            disabled={!input}
+            color="#FF5864"
+          />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
