@@ -12,7 +12,16 @@ const ChatHeader = ({ title, callEnabled }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={tw("p-2")}>
           <Ionicons name="chevron-back-outline" size={34} color="#FF5064" />
         </TouchableOpacity>
-        <Text style={tw("text-2xl font-bold pl-2")}>{title}</Text>
+        <Text
+          style={[
+            tw(`${callEnabled ? "text-lg" : "text-2xl"}  font-bold pl-2`),
+            {
+              fontSize: callEnabled ? 15 : 23,
+            },
+          ]}
+        >
+          {title}
+        </Text>
       </View>
       {callEnabled && (
         <TouchableOpacity style={tw("rounded-full mr-4 p-3 bg-red-200")}>
