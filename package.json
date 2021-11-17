@@ -12,6 +12,7 @@
     "@react-navigation/native-stack": "^6.2.5",
     "expo": "~43.0.2",
     "expo-google-app-auth": "~9.0.0",
+    "expo-image-picker": "~11.0.3",
     "expo-status-bar": "~1.1.0",
     "firebase": "^9.4.1",
     "moment": "^2.29.1",
