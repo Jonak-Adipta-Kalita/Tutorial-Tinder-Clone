@@ -17,7 +17,7 @@ import useAuth from "../hooks/useAuth";
 import getMatchedUserInfo from "../lib/getMatchedUserInfo";
 import tw from "tailwind-rn";
 import SenderMessage from "../components/SenderMessage";
-import RecieverMessage from "../components/RecieverMessage";
+import ReceiverMessage from "../components/ReceiverMessage";
 
 const MessageScreen = () => {
   const { user } = useAuth();
@@ -50,14 +50,14 @@ const MessageScreen = () => {
               message.userId === user.uid ? (
                 <SenderMessage key={message.id} message={message} />
               ) : (
-                <RecieverMessage key={message.id} message={message} />
+                <ReceiverMessage key={message.id} message={message} />
               )
             }
           />
         </TouchableWithoutFeedback>
         <View
           style={tw(
-            "flex-row justify-between items-center bg-white border-t border-gray-200 px-5 py-2"
+            "flex-row justify-between items-center border-t border-gray-200 px-5 py-2"
           )}
         >
           <TextInput
@@ -67,12 +67,7 @@ const MessageScreen = () => {
             onSubmitEditing={sendMessage}
             value={input}
           />
-          <Button
-            style={tw("rounded-lg")}
-            onPress={sendMessage}
-            title="Send"
-            color="#FF5864"
-          />
+          <Button onPress={sendMessage} title="Send" color="#FF5864" />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
